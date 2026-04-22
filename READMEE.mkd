@@ -1,0 +1,3 @@
+Création des classes POO
+Configuration de l'environnement .env
+Installation de requests et de dotenv
