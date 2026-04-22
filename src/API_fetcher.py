@@ -1,5 +1,5 @@
 import requests
-from GLOBALS import URL
+from src.GLOBALS import URL
 
 #récupération des données depuis le .env
 from dotenv import load_dotenv

@@ -1,11 +1,15 @@
-from GLOBALS import URL
+from src.GLOBALS import URL
 
 def formatObject(dic):
+    border = "-"*62 #fabriquer manuellement la bordure pour l'affichage
     print()
-    print("-"*50)
+    print(border.center(120))
+    #print("\t\t   ",border)
     for key,val in dic.items():
-        print(f"{key:<20} >> {val:>15}")
-    print("-"*50)
+        line = f"{key:<20} >> {val:>35}"
+        print(line.center(120))
+    
+    print(border.center(120))
     print()
 
 def formatText(text,max_length):

@@ -1,18 +1,18 @@
-from timer import time
-from UI import UI
+from src.classes.timer import time
+from src.classes.UI import UI
 
-from GLOBALS import LENGTH
-from GLOBALS import URL
-from GLOBALS import alignLeft
-from GLOBALS import URL
+from src.GLOBALS import LENGTH
+from src.GLOBALS import URL
+from src.GLOBALS import alignLeft
+from src.GLOBALS import URL
 
-from API_fetcher import fetchAPI
-from API_fetcher import buildUrl
+from src.API_fetcher import fetchAPI
+from src.API_fetcher import buildUrl
 
-from functions import formatObject
-from functions import formatText
+from src.functions import formatObject
+from src.functions import formatText
 
-from ville import Ville
+from src.classes.ville import Ville
 
 #chargement des données depuis le .env
 from dotenv import load_dotenv

@@ -1,5 +1,5 @@
-from GLOBALS import LENGTH
-from GLOBALS import HELP
+from src.GLOBALS import LENGTH
+from src.GLOBALS import HELP
 
 sections = [
     'Accueil',
