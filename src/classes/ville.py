@@ -25,3 +25,17 @@ class Ville:
             "Nuages": str(self.nuages) + "%",
             "Fuseau Horaire": "UTC + " + str(self.fuseau // 3600)
         }
+    
+    def toJSON(self):
+        return {
+            "Localisation": self.country,
+            "localisation": self.localisation,
+            "temperature": self.temperature,
+            "seaLevel": self.seaLevel,
+            "humidite": self.humidite,
+            "ressenti": self.ressenti,
+            "ciel": self.ciel,
+            "vent": self.vent,
+            "nuages": self.nuages,
+            "fuseau": self.fuseau
+        }

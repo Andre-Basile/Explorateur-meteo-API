@@ -1,5 +1,21 @@
+from pathlib import Path
+
 from src.GLOBALS import LENGTH
 from src.GLOBALS import HELP
+from src.GLOBALS import WELCOME
+
+#pour les recherches de la section 2
+from src.API_fetcher import fetchAPI
+from src.API_fetcher import buildUrl
+from src.classes.ville import Ville
+from src.classes.FileManager import File
+
+from src.functions import formatObject
+from src.functions import formatText
+
+from src.GLOBALS import DATAS_FOLDER_NAME
+from src.GLOBALS import HISTORIC_FILE_NAME
+
 
 sections = [
     'Accueil',
@@ -11,11 +27,22 @@ sections = [
     'Quitter'
 ]
 
+
 sections_numbers_codes = ['1', '2', '3', '4', '5', '6', '7']
 
-class UI:
+class UI:    
+
     def __init__(self,name = "Weather For All"):
         self.appname = name
+        self.menu_sections = {   #objet pour mapper les fonctions avec leurs numéros
+            "1" : self.section_accueil,
+            "2": self.section_recherche,
+            "3": self.section_comparaison,
+            "4": self.section_historique,
+            "5": self.section_statistiques,
+            "6": self.section_aide,
+            "7": self.section_quitter,
+        }
 
     def display(self,data,align = None):
         if(align) : 
@@ -40,7 +67,7 @@ class UI:
         res = input(message)
         return res
 
-    def evaluateChoice(self,entry):
+    def evaluate_choice(self,entry):
         if entry in sections_numbers_codes:
             return str(entry)
         else:
@@ -50,15 +77,57 @@ class UI:
             else:
                 return None
     
-    def sectionMeteo(self,message = "Entrez le terme de recherche(la ville) > "):
+
+    def section_accueil(self):
+        formatText(WELCOME,LENGTH)
+
+    def section_recherche(self,message = "Entrez le terme de recherche(la ville) > "):
+        trouve = False
         search =  input(message)
-        return search
+        print("\n\tRecherche de <{}> en cours...".format(search))
+        url = buildUrl(search)
+        response = fetchAPI(url)
+
+        if not (response.get("error") is None):
+            print("Votre recherche n'a pas abouti")
+            return
+        
+        ville_recherchee = Ville(response)
+        print("\n\tRecherche de <{}> terminée !".format(search))
+        formatObject(ville_recherchee.getInfos())
+
+        # enregistrer la recherche dans l'historique de l'utilisateur
+
+        #accéder au dossier de <historic.json>
+        dossier_courant = Path(__file__).parent # parent : classes
+        parent_du_dossier_courant = dossier_courant.parent # parent : src
+        parent_du_parent_du_dossier_courant = parent_du_dossier_courant.parent # parent : dossier du projet
+        chemin_historique = parent_du_parent_du_dossier_courant / DATAS_FOLDER_NAME / HISTORIC_FILE_NAME
+        print("le chemin de l'historique est : {}".format(chemin_historique))
+        historic_file = File("Historique de recherches",chemin_historique)
+        historic_file.write(ville_recherchee.toJSON())
+
+
+    def section_comparaison(self):
+        pass
+        
+    def section_historique(self):
+        pass
+
+    def section_statistiques(self):
+        pass
+
+    def section_aide(self):
+        formatText(HELP,LENGTH)
     
-    def sectionAide(self):
-        return HELP
-    
-    def sectionQuitter(self):
+    def section_quitter(self):
         response = input('Voulez-vous vraiment quitter ? (oui/non) > ')
         if "oui" in response.lower():
+            print("Weather For All vous dit au revoir !")
             return True
         return False
+   
+    def run(self,user_choice):
+         #section correspondante à la sélection de l'utilisateur
+         fonction_correspondante = self.menu_sections.get(user_choice)
+         fonction_correspondante()

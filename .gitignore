@@ -5,3 +5,4 @@ tests/binary.py
 tests/cls.py
 tests/tester.py
 tests/test_Andre.py
+datas/file.py

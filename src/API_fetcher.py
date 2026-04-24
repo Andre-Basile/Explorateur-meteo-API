@@ -17,15 +17,28 @@ def buildUrl(ville):
 
 def fetchAPI(url,params=None):
     response = None
-    if(params == None):
-        response = requests.get(url)
-    else:
-        response = requests(url,params)
-
-    if(response.status_code != 200):
-       # raise TypeError("Code de statut différent de 200")
-       return {"Erreur different de 200 !"}
-    return response.json()
+    try:        
+        response = requests.get(url,params,timeout=15) #get peut gérer les paramètres de requête directement        
+        response.raise_for_status() #lève une exception pour les codes d'erreur HTTP
+        return response.json()  
+    except requests.exceptions.Timeout as e:
+        Error_object = {
+            "error" : True,
+            "cause" : "Timeout"
+        }
+        return Error_object
+    except requests.exceptions.ConnectionError as e:
+        Error_object = {
+            "error" : True,
+            "cause" : "Connection Error"
+        }
+        return Error_object
+    except requests.exceptions.RequestException as e:
+        Error_object = {
+            "error" : True,
+            "cause" : "Request Exception"
+        }
+        return Error_object
 
 
 

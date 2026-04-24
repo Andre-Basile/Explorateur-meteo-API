@@ -31,3 +31,7 @@ def obtenirEntier(message = None):
         else:
             break
     return data
+
+
+def getPath(filename):    
+    pass
