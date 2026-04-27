@@ -184,12 +184,17 @@ class UI:
         for terme in villes_a_comparer:
             url = buildUrl(terme)
            # response = fetchAPI(url)
-            response = donnes_temporaires_utilisees_pour_faute_de_connexion[i]
+           # response = donnes_temporaires_utilisees_pour_faute_de_connexion[i]
+            response = fetchAPI(url)
             i+=1
+            #print("respose.ge(erreur) = {}".format(response.get("error")))
             if (response.get("error") is None):
                 #loc,temp,hum,vent
                 #tmp = Ville(response).toJSON()
-                tmp = response
+                tmp = Ville(response).toJSON()
+              #  print("Taille de tmp : {}".format(len(tmp)))
+               # print("tmp est : ",tmp)
+                #tmp = response
                 extracted_informations = {
                     "localisation" : tmp.get("localisation"),
                     "temperature" : tmp.get("temperature"),

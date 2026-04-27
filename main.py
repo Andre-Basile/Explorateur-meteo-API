@@ -38,11 +38,15 @@ text = '\n' +  UserInterface.menu() + '\n'
 print("Bienvenue sur Weather For All,votre assistant météo smart !")
 UserInterface.display(text)
 UserInterface.run("1") # affiche le message de bienvenue
-UserSelect = UserInterface.ask("Votre choix > ")
-UserSelect = UserInterface.evaluate_choice(UserSelect) or "Entrée invalide" # rien que du string est retourné 
+UserSelect = None
+
+while(True):
+    UserSelect = UserInterface.ask("Votre choix > ")
+    UserSelect = UserInterface.evaluate_choice(UserSelect) or None
+    if (UserSelect is not None): break
 
 print('\rChoix : {}'.format(UserSelect))
-action = UserInterface.run(UserSelect) or "Aucune section correspondante"
+if not(UserSelect is None):action = UserInterface.run(UserSelect) or "Aucune section correspondante"
 
 """
 if UserSelect == "2":
