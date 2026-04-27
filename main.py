@@ -1,18 +1,18 @@
-from src.classes.timer import time
+from src.classes.Timer import time
 from src.classes.UI import UI
 
-from src.GLOBALS import LENGTH
-from src.GLOBALS import URL
-from src.GLOBALS import alignLeft
-from src.GLOBALS import URL
+from src.Globals import LENGTH
+from src.Globals import URL
+from src.Globals import alignLeft
+from src.Globals import URL
 
 from src.API_fetcher import fetchAPI
 from src.API_fetcher import buildUrl
 
-from src.functions import formatObject
-from src.functions import formatText
+from src.Functions import formatObject
+from src.Functions import formatText
 
-from src.classes.ville import Ville
+from src.classes.Ville import Ville
 from src.classes.FileManager import File
 
 #chargement des données depuis le .env

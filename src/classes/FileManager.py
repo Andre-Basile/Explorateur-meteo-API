@@ -1,8 +1,8 @@
 
 import json
 from pathlib import Path # pour avoir le chemin des fichiers de façon fiable
-from src.GLOBALS import DATAS_FOLDER_NAME
-from src.GLOBALS import HISTORIC_FILE_NAME
+from src.Globals import DATAS_FOLDER_NAME
+from src.Globals import HISTORIC_FILE_NAME
 
     
 def get_historic_file_path():
@@ -70,6 +70,19 @@ class File:
             print("Une erreur s'est produite: {}".format(e))
         return False
     
+    def rechercher(self,terme_de_recherche):
+        villes_enregistrees = self.read()
+
+        if villes_enregistrees is None: # self.read() renvoie None si le fichier est vide
+            print("Aucune recherche enregistrée dans l'historique.")
+            return None
+        
+        resultats = []
+        for ville in villes_enregistrees:
+            nom_de_ville = ville.get("localisation","").lower()
+            if(terme_de_recherche.lower() in nom_de_ville):
+                return ville
+        return None
 
 """
 def getFileContent(path):

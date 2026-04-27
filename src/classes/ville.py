@@ -1,4 +1,4 @@
-
+from src.classes.Timer import time # pour sauvegarder la date
 
 class Ville:
     def __init__(self, jsondata):
@@ -27,8 +27,9 @@ class Ville:
         }
     
     def toJSON(self):
+        TIME_KEEPER = time()
         return {
-            "Localisation": self.country,
+            "code_pays": self.country,
             "localisation": self.localisation,
             "temperature": self.temperature,
             "seaLevel": self.seaLevel,
@@ -37,5 +38,6 @@ class Ville:
             "ciel": self.ciel,
             "vent": self.vent,
             "nuages": self.nuages,
-            "fuseau": self.fuseau
+            "fuseau": self.fuseau,
+            "date" : TIME_KEEPER.getFormalTime()
         }
