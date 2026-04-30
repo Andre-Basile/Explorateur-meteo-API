@@ -84,7 +84,7 @@ pip install -r requirements.txt
 
 <div style="border:2px solid orange; border-radius:8px; margin:10px; padding:10px">
         <ul>
-          <li>Rendez-vous sur le site : [https://openweathermap.org/](https://openweathermap.org/)</li>
+          <li>Rendez-vous sur le site : https://openweathermap.org </li>
           <li>Créez un compte ou connectez-vous.</li>
           <li>Accédez à la section API keys de votre profil et copiez votre clé.</li>
           <li>À la racine du projet, renommez le fichier <b>.env.exemple</b> en <b>.env</b></li>
