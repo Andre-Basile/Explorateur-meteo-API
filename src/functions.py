@@ -1,8 +1,19 @@
 from src.Globals import URL
 
-def formatObject(dic):
+import os
+
+def clear():
+    commande = None
+    if os.name == 'nt' : # Windows
+        commande = "cls"
+    else : # Linux et autres(Mac...)
+        commande = "clear"
+    os.system(commande)
+
+
+def formatObject(dic,retourner_a_la_ligne=True):
     border = "-"*62 #fabriquer manuellement la bordure pour l'affichage
-    print()
+    if retourner_a_la_ligne: print()
     print(border.center(120))
     #print("\t\t   ",border)
     for key,val in dic.items():
@@ -10,7 +21,7 @@ def formatObject(dic):
         print(line.center(120))
     
     print(border.center(120))
-    print()
+    if retourner_a_la_ligne: print()
 
 def formatText(text,max_length):
     n = len(text)
@@ -83,3 +94,78 @@ def afficher_resultat_de_comparaison(centrer_sur:int,matrice:list):
         tmp = f"{line[0]:<25}{line[1]:<18}{line[2]:<18}{line[3]:<8}".center(centrer_sur)
         print(tmp)
     print(barre)
+
+
+def afficher_historique(matrice:list):
+    pass
+
+
+def obtenir_suite_via_cle(cle,valeur):  # fonction exploitée par une autre fonction de ce module
+    dic = {
+        "code_pays" : "",
+        "localisation" : "",
+        "temperature" : "°C",
+        "seaLevel" : "",
+        "humidite" : "%",
+        "ressenti" : "%",
+        "ciel" : "",
+        "vent" : "m/s",
+        "nuages" : "%",
+        "fuseau" : "UTC + ",
+        "date" : "    "
+    }
+
+    for key,value in dic.items() : 
+        if cle.lower() == key :
+            if key == "fuseau" :
+                return (value + str(valeur // 3600))
+            else :
+                return (str(valeur) + value)
+                
+    print("Clé invalide : {}".format(cle))
+    return  None
+
+
+
+def afficher_historique(table_of_objects:list,entete:list,cles_cibles:list,centrer_sur:int):
+    tableau_affichage = []
+
+    #créer l'entete de l'affichage
+     #32 - 14
+    header = f"{entete[0]:<32}"
+    for i in range(len(entete) - 1):
+        j = i + 1
+        #header += f"{entete[j]:<14}"
+        header += f"{entete[j].center(14)}"
+    
+    tableau_affichage.insert(0,header)
+
+    # obtenir la taille de la chaine maximale
+    tailles = []
+    for expr in entete: tailles.append(len(expr))
+    maximum = max(tailles)
+
+    for element in table_of_objects :
+        chaine = ""
+        for cle in cles_cibles : 
+            data = element.get(cle)
+            data = obtenir_suite_via_cle(cle,data)
+            data = data.center(maximum)
+            #chaine += f"{data:<{maximum}}"
+            chaine += f"{data}"
+
+        tableau_affichage.append(chaine)
+
+    # insertion des bordures au début et à la fin
+    n = len(tableau_affichage[0])
+    bordure = "-" * (n + 2)
+    bas = "_" * (n + 2)
+    
+    tableau_affichage.insert(0,bordure)
+    tableau_affichage.insert(2,bordure)
+    tableau_affichage.append(bas)
+
+    for line in (tableau_affichage):
+        print(f"{line}".center(130))
+    print()
+    print()

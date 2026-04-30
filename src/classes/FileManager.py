@@ -83,35 +83,38 @@ class File:
             if(terme_de_recherche.lower() in nom_de_ville):
                 return ville
         return None
+    
+    def obtenir_villes_distinctes_enregistrees(self,cle_cible="localisation"):
+        villes_enregistrees = self.read() # une liste contenant toutes les villes
 
-"""
-def getFileContent(path):
-    try:
-        with open(path,"r") as file:
-            content = file.read()
-            return content
-    except FileNotFoundError:
-        print("Fichier de chemin \"{}\" non trouvé".format(path))
-        return None
-    except json.JSONDecodeError as e:
-        print("Erreur lors du décodage JSON : le contenu du fichier n'est pas un JSON valide", e)
-        return None
-    except Exception as e:
-        print("Une erreur s'est produite: {}".format(e))
-        return None
+        # extraire les noms des villes 
+        noms_de_villes = []
+        for ville in villes_enregistrees:
+            noms_de_villes.append(ville.get(cle_cible))
+        
+        # filtrer pour ne renvoyer que des données non doublées
+        distinctes = []
+        for nom in noms_de_villes :
+            if not (nom in distinctes):
+                distinctes.append(nom)
+        return distinctes
 
+    def obtenir_nombre_de_consultation(self,nom_ville,cle_cible="localisation"):
+        villes_enregistrees = self.read() # une liste contenant toutes les villes
+        counter = 0 # compteur des occurrences de la ville
+    
+        for ville in villes_enregistrees:
+            if(nom_ville.lower() in ville.get(cle_cible,None).lower()):
+                counter += 1
 
+        return counter
+    
+    def rechercher_toutes_les_occurences(self,nom_de_ville,cle="localisation"):
+        villes_enregistrees = self.read()
+        results = []
 
-def wwriteInFile(path, content,indentation=4):
-    try:
-        with open(path,"w") as fichier:
-            json.dump(content,fichier, indent=indentation)
-            return True
-    except PermissionError:
-        print("Erreur de permission : impossible d'écrire dans le fichier \"{}\"".format(path))
-    except TypeError as e:
-        print("Erreur de type : {}".format(e))
-    except Exception as e:
-        print("Une erreur s'est produite: {}".format(e))
-    return False
-        """
+        for ville in villes_enregistrees:
+            if(nom_de_ville.lower() == ville.get(cle).lower()):
+                results.append(ville)
+
+        return results

@@ -24,19 +24,22 @@ def fetchAPI(url,params=None):
     except requests.exceptions.Timeout as e:
         Error_object = {
             "error" : True,
-            "cause" : "Timeout"
+            "cause" : "Timeout",
+            "solution" : "Revoyez votre connection internet !"
         }
         return Error_object
     except requests.exceptions.ConnectionError as e:
         Error_object = {
             "error" : True,
-            "cause" : "Connection Error"
+            "cause" : "Connection Error",
+            "solution" : "Connectez-vous à internet et réessayez !"
         }
         return Error_object
     except requests.exceptions.RequestException as e:
         Error_object = {
             "error" : True,
-            "cause" : "Request Exception"
+            "cause" : "Request Exception",
+            "solution" : "Réessayez une nouvelle ville..."
         }
         return Error_object
 

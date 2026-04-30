@@ -15,6 +15,7 @@ from src.Functions import formatText
 from src.Functions import fragmenter_selon_caracteres
 from src.Functions import objet_qui_renvoie_le_max_et_le_min_suivant_une_cle_a_valeur_numerique
 from src.Functions import afficher_resultat_de_comparaison
+from src.Functions import afficher_historique
 
 from src.Globals import DATAS_FOLDER_NAME
 from src.Globals import HISTORIC_FILE_NAME
@@ -99,7 +100,8 @@ class UI:
         response = fetchAPI(url)
 
         if not (response.get("error") is None):
-            print("Votre recherche n'a pas abouti")
+            solution = response.get("solution")
+            print("Votre recherche n'a pas abouti.{}".format(solution))
             return
         
         ville_recherchee = Ville(response)
@@ -115,6 +117,8 @@ class UI:
             historic_file = File("Historique de recherches",chemin_historique)
             historic_file.write(ville_recherchee.toJSON())
             self.display("Recherche enregistrée !")
+        else:
+            self.display("Recherche non enregistrée !")
         
 
     def section_comparaison(self):
@@ -129,72 +133,16 @@ class UI:
          - on lance de nouvelles recherches pour toutes les villes entrées par l'utilisateur 
         """
 
-        donnes_temporaires_utilisees_pour_faute_de_connexion = [
-    {
-        "code_pays": "JP",
-        "localisation": "Pr\u00e9fecture de Tokyo",
-        "temperature": 12.42,
-        "seaLevel": 1020,
-        "humidite": 72,
-        "ressenti": 11.6,
-        "ciel": "nuageux",
-        "vent": 7.72,
-        "nuages": 75,
-        "fuseau": 32400
-    },
-    {
-        "code_pays": "US",
-        "localisation": "Portland",
-        "temperature": 9.3,
-        "seaLevel": 1014,
-        "humidite": 53,
-        "ressenti": 9.3,
-        "ciel": "ciel d\u00e9gag\u00e9",
-        "vent": 0.45,
-        "nuages": 0,
-        "fuseau": -25200
-    },
-    {
-        "code_pays": "BJ",
-        "localisation": "Parakou",
-        "temperature": 28.37,
-        "seaLevel": 1010,
-        "humidite": 64,
-        "ressenti": 30.54,
-        "ciel": "partiellement nuageux",
-        "vent": 4.5,
-        "nuages": 25,
-        "fuseau": 3600
-    },
-    {
-        "code_pays": "BJ",
-        "localisation": "Cotonou",
-        "temperature": 29.99,
-        "seaLevel": 1010,
-        "humidite": 79,
-        "ressenti": 36.99,
-        "ciel": "partiellement nuageux",
-        "vent": 5.14,
-        "nuages": 40,
-        "fuseau": 3600
-    }
-]
         i = 0
 
         for terme in villes_a_comparer:
             url = buildUrl(terme)
-           # response = fetchAPI(url)
            # response = donnes_temporaires_utilisees_pour_faute_de_connexion[i]
             response = fetchAPI(url)
+            #print("response : {}".format(response))
             i+=1
-            #print("respose.ge(erreur) = {}".format(response.get("error")))
             if (response.get("error") is None):
-                #loc,temp,hum,vent
-                #tmp = Ville(response).toJSON()
                 tmp = Ville(response).toJSON()
-              #  print("Taille de tmp : {}".format(len(tmp)))
-               # print("tmp est : ",tmp)
-                #tmp = response
                 extracted_informations = {
                     "localisation" : tmp.get("localisation"),
                     "temperature" : tmp.get("temperature"),
@@ -204,36 +152,27 @@ class UI:
                 results.append(extracted_informations)
                 line = [tmp.get("localisation"),str(tmp.get("temperature")) + "°C",str(tmp.get("humidite")) + "%",str(tmp.get("vent")) + "m/s"]
                 matrice_pour_affichage_resultat.append(line)
+            
+            if not (response.get("error") is None):
+                solution = response.get("solution") # obtenir la solution au problème
+                #print("Votre recherche n'a pas abouti.{}".format(solution))
+                # return
+                
+
 
         func = objet_qui_renvoie_le_max_et_le_min_suivant_une_cle_a_valeur_numerique
         critere_temperature = func(results,"temperature")
         critere_humidite = func(results,"humidite")
         critere_vent = func(results,"vent")
 
-        #print("critere temperature : {}".format(critere_temperature))
+
         la_plus_chaude = critere_temperature.get("maximum")
         la_plus_humide = critere_humidite.get("maximum")
         plus_venteux = critere_vent.get("maximum")
         la_plus_fraiche = critere_temperature.get("minimum")
-            # print("Le type de {} est {} et villes a comparer est : {}".format(terme,type(terme),villes_a_comparer))
-          #  ville = historic_file.rechercher(terme)
-            # print(ville)
-          #  if ville is None:
-                # on lance la recherche de la ville via l'API et on l'enregistre
-           #     url = buildUrl(terme)
-           #     response = fetchAPI(url)
-            #    print(response)
-
-           #     if (response.get("error") is None): # la recherche a abouti
-           #         ville_recherchee = Ville(response)
-           # else:
-            #    results.append(ville)
-       # print(results)
-       # print("La plus chaude est {},\n la plus humide est {},\n le plus venteux est {}\n et la plus fraîche est {}".format(la_plus_chaude.get("localisation"),la_plus_humide.get("localisation"),plus_venteux.get("localisation"),la_plus_fraiche.get("localisation")))
-       # print("TEST DE LA NOUVELLE FONCTION D'AFFICHAGE...")
         print("\n\n")
         afficher_resultat_de_comparaison(120,matrice_pour_affichage_resultat)
-       # print("FIN DU TEST !")
+
         
         result = {
             "Plus chaude" : la_plus_chaude.get("localisation"),
@@ -246,10 +185,100 @@ class UI:
 
 
     def section_historique(self):
-        pass
+        
+        chemin_historique = self.chemin_vers_le_fichier_historique()
+        historic_file = File("Historique de recherches",chemin_historique)
+        response = historic_file.read()       
+
+        entete = ["Date","Code pays","Ville","Température","Humidité","Vent","Fuseau horaire"]
+        cles_cibles = ["date","code_pays","localisation","temperature","humidite","vent","fuseau"]
+        
+        print("\t Historique des recherches...\n")
+        afficher_historique(response,entete,cles_cibles,120)
 
     def section_statistiques(self):
-        pass
+        chemin_historique = self.chemin_vers_le_fichier_historique()
+        historic_file = File("Historique de recherches",chemin_historique)
+        noms_villes_consultees = historic_file.obtenir_villes_distinctes_enregistrees()
+
+        dic = {}
+        for ville in noms_villes_consultees:
+            dic[ville] = f"(Consulté {historic_file.obtenir_nombre_de_consultation(ville)} fois)"
+
+
+        print(" " * 28,"Les villes que vous avez consultées...")
+        formatObject(dic,False)
+        print(f"\t\tObtenir les statistiques de quelle ville ?")
+        ville_cible = input("\t\t> ")
+
+        valid = False
+        for ville in noms_villes_consultees:
+            if ville_cible.lower() in ville.lower():
+                ville_cible = ville
+                valid = True
+        if not valid:
+            print("Vous n'avez pas recherché cette ville <{}> auparavant ! ".format(ville_cible).center(LENGTH))
+            return None
+        # on continue si la réponse est valide, c'est-à-dire parmi les villes auparavant recherchées
+        text = f"Affichage des stats de <<{ville_cible}>>"
+        print()
+        print(text.center(LENGTH))
+        print(("-" * len(text)).center(LENGTH))
+
+        occurences_de_la_ville_ciblee = historic_file.rechercher_toutes_les_occurences(ville_cible)
+        tableau = []
+        entete = ["Dates","Températures","Degrés d'humidité"]
+        entete = f"| {entete[0]:<30}{entete[1]:<20}{entete[2]:>20} |".center(LENGTH)
+        tableau.insert(0,entete)
+        for occurence in occurences_de_la_ville_ciblee:
+            date = occurence.get("date")
+            temperature = "   " + str(round(occurence.get("temperature"), 2)) + "°C"
+            humidite = str(round(occurence.get("humidite"), 2)) + "%  "
+            tmp = f"| {date:<30}{temperature:<20}{humidite:>20} |".center(LENGTH)
+            tableau.append(tmp)
+
+        underliner1 = ("-" * (30 + 20 + 20 + 4))
+        underliner1 = f"{underliner1}".center(LENGTH)
+        
+        underliner2 = ("-" * (30 + 20 + 20))
+        underliner2 = f"| {underliner2} |".center(LENGTH)
+
+        tableau.insert(0,underliner1)
+        tableau.insert(2,underliner2)
+        tableau.append(underliner1)
+        for l in tableau:print(l)
+
+        # calcul de la température moyenne et du degré moyen d'humidité
+        temperatures = []
+        degres_humidite = []
+        for occr in occurences_de_la_ville_ciblee:
+            temperatures.append(float(occr.get("temperature")))
+            degres_humidite.append(float(occr.get("humidite")))
+
+        temperature_moyenne = round( sum(temperatures) / len(occurences_de_la_ville_ciblee), 2) # sum() est natif de Python
+        humidite_moyenne =  round( sum(degres_humidite) / len(occurences_de_la_ville_ciblee), 2)
+        
+        temperature_min = min(temperatures)
+        temperature_max = max(temperatures)
+
+        humidite_min = min(degres_humidite)
+        humidite_max = max(degres_humidite)
+        
+        infos_temperature = {
+            "Température moyenne" : str(temperature_moyenne) + "°C",
+            "Température minimale" : str(temperature_min) + "°C",
+            "Température maximale" : str(temperature_max) + "°C"
+        }
+
+        infos_humidite = {
+            "Humidité moyenne" : str(humidite_moyenne) + "°C",
+            "Humidité minimale" : str(humidite_min) + "%",
+            "Humidité maximale" : str(humidite_max) + "%"
+        }
+
+        formatObject(infos_temperature,False)
+        formatObject(infos_humidite,False)
+
 
     def section_aide(self):
         formatText(HELP,LENGTH)
@@ -262,9 +291,9 @@ class UI:
         return False
    
     def run(self,user_choice):
-         #section correspondante à la sélection de l'utilisateur
+         # section correspondante à la sélection de l'utilisateur
          fonction_correspondante = self.menu_sections.get(user_choice)
-         fonction_correspondante()
+         return fonction_correspondante()
 
     def ask_for_saving(self,message = "Voulez-vous enregistrer cette recherche dans votre historique ? (oui/non) > "):
         response = input(message)

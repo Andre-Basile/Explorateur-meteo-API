@@ -10,5 +10,3 @@ class time:
         date = datetime.now()
         date = date.strftime("%A %d %B %Y à %H:%M")
         return date.capitalize()
-
-

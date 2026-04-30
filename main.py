@@ -2,18 +2,7 @@ from src.classes.Timer import time
 from src.classes.UI import UI
 
 from src.Globals import LENGTH
-from src.Globals import URL
 from src.Globals import alignLeft
-from src.Globals import URL
-
-from src.API_fetcher import fetchAPI
-from src.API_fetcher import buildUrl
-
-from src.Functions import formatObject
-from src.Functions import formatText
-
-from src.classes.Ville import Ville
-from src.classes.FileManager import File
 
 #chargement des données depuis le .env
 from dotenv import load_dotenv
@@ -41,27 +30,16 @@ UserInterface.run("1") # affiche le message de bienvenue
 UserSelect = None
 
 while(True):
-    UserSelect = UserInterface.ask("Votre choix > ")
-    UserSelect = UserInterface.evaluate_choice(UserSelect) or None
-    if (UserSelect is not None): break
+    while(True):
+        UserSelect = UserInterface.ask("Votre choix > ")
+        UserSelect = UserInterface.evaluate_choice(UserSelect) # renvoie <None> si rien ne correspond, sinon le numéro de la section choisie
+        if (UserSelect is not None): break
 
-print('\rChoix : {}'.format(UserSelect))
-if not(UserSelect is None):action = UserInterface.run(UserSelect) or "Aucune section correspondante"
+    print('\rChoix : {}'.format(UserSelect))
+    if not(UserSelect is None):
+        action = UserInterface.run(UserSelect)
+        if action is True:break
 
-"""
-if UserSelect == "2":
-    search = UserInterface.section_recherche()
-    print("\n\tRecherche de <{}> en cours...".format(search))
-    url = buildUrl(search)
-    response = fetchAPI(url)
-    ville_recherchee = Ville(response)
-    print("\n\tRecherche de <{}> terminée !".format(search))
-    formatObject(ville_recherchee.getInfos())
-if UserSelect == "6":
-    text = UserInterface.sectionAide()
-    formatText(text,LENGTH)
-"""
 ####################
-
 UserInterface.display(date,alignLeft)
 print("="*LENGTH)
