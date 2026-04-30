@@ -5,4 +5,6 @@ tests/binary.py
 tests/cls.py
 tests/tester.py
 tests/test_Andre.py
+tests/tester.py
+tests/testAPI_local.py
 datas/file.py
