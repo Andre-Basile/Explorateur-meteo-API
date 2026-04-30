@@ -159,7 +159,9 @@ class UI:
                 # return
                 
 
-
+        if len(results) == 0:
+            print("Aucun résultat trouvé pour les villes entrées !")
+            return
         func = objet_qui_renvoie_le_max_et_le_min_suivant_une_cle_a_valeur_numerique
         critere_temperature = func(results,"temperature")
         critere_humidite = func(results,"humidite")
